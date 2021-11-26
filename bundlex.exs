@@ -12,7 +12,7 @@ defmodule Membrane.Ogg.BundlexProject do
       payloader: [
         deps: [membrane_common_c: :membrane, unifex: :unifex],
         sources: [
-          "_generated/payloader.c",
+          "_generated/nif/payloader.c",
           "payloader.c"
         ],
         libs: ["ogg"]

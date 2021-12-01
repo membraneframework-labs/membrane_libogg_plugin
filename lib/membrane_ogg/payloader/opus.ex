@@ -25,6 +25,14 @@ defmodule Membrane.Ogg.Payloader.Opus do
                 See https://datatracker.ietf.org/doc/html/rfc7845#section-4
                 """
               ],
+              serial_number: [
+                type: :non_neg_integer,
+                description: """
+                Ogg logical bitstreams must be assigned a unique 4-byte serial number which is chosen randomly.
+                This option allows you to supply your own serial number instead which can be useful for reproducability.
+                See https://datatracker.ietf.org/doc/html/rfc3533#section-4
+                """
+              ],
               original_sample_rate: [
                 type: :non_neg_integer,
                 default: 0,

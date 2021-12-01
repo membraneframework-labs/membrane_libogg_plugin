@@ -9,8 +9,16 @@ defmodule Membrane.Ogg.Payloader do
 
   alias __MODULE__.Native
 
-  def init do
+  def init() do
     stream_identifier() |> Native.create()
+  end
+
+  def init(serial_number) do
+    if serial_number != nil do
+      serial_number |> Native.create()
+    else
+      stream_identifier() |> Native.create()
+    end
   end
 
   def make_pages(buffer, native, position, packet_number, header_type) do

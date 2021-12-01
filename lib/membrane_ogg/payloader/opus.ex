@@ -25,11 +25,12 @@ defmodule Membrane.Ogg.Payloader.Opus do
                 See https://datatracker.ietf.org/doc/html/rfc7845#section-4
                 """
               ],
-              serial_number: [
+              random_serial_number?: [
                 type: :non_neg_integer,
+                default: true,
                 description: """
                 Ogg logical bitstreams must be assigned a unique 4-byte serial number which is chosen randomly.
-                This option allows you to supply your own serial number instead which can be useful for reproducability.
+                This option allows you to enforce using the same serial number every time which can be useful for reproducability.
                 See https://datatracker.ietf.org/doc/html/rfc3533#section-4
                 """
               ],
@@ -82,7 +83,8 @@ defmodule Membrane.Ogg.Payloader.Opus do
 
   @impl true
   def handle_stopped_to_prepared(_ctx, state) do
-    case Payloader.init() do
+    IO.puts(state.random_serial_number?)
+    case Payloader.init(state.random_serial_number?) do
       {:ok, payloader} ->
         {:ok, %{state | payloader: payloader}}
 

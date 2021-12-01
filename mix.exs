@@ -24,7 +24,7 @@ defmodule MembraneOggPlugin.MixProject do
       {:membrane_core, "~> 0.8.0"},
       {:membrane_common_c, "~> 0.10.0"},
       {:unifex, "~> 0.7.0"},
-      #! TODO publish on hex and don't reference github
+      # TODO publish on hex and don't reference github
       {:membrane_ogg_format, github: "membraneframework/membrane_ogg_format"},
       {:membrane_opus_format, "~> 0.3.0"}
     ]

@@ -18,7 +18,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   @reference_sample_rate 48_000
 
   def_options frame_size: [
-                type: :non_neg_integer,
+                type: :float,
                 description: """
                 The duration of an Opus packet as defined in [RFC6716] can be any
                 multiple of 2.5 ms, up to a maximum of 120 ms.
@@ -204,6 +204,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   end
 
   defp audio_pages(data, _ctx, state) do
+    # FIXME for now doesn't handle 0-length frames
     position_offset = div(@reference_sample_rate, 1000) * state.frame_size
 
     {:ok, output} =

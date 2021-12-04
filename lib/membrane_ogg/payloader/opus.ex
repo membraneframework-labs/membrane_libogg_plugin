@@ -83,7 +83,6 @@ defmodule Membrane.Ogg.Payloader.Opus do
 
   @impl true
   def handle_stopped_to_prepared(_ctx, state) do
-    IO.puts(state.random_serial_number?)
     case Payloader.init(state.random_serial_number?) do
       {:ok, payloader} ->
         {:ok, %{state | payloader: payloader}}

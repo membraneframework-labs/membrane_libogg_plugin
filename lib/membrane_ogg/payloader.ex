@@ -13,7 +13,7 @@ defmodule Membrane.Ogg.Payloader do
     if random_serial_number? do
       stream_identifier() |> Native.create()
     else
-      Native.create(4210672757)
+      Native.create(4_210_672_757)
     end
   end
 

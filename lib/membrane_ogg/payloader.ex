@@ -9,6 +9,7 @@ defmodule Membrane.Ogg.Payloader do
 
   alias __MODULE__.Native
 
+  @spec init(boolean) :: {:ok, state :: binary} | {:error, reason :: any}
   def init(random_serial_number?) do
     if random_serial_number? do
       stream_identifier() |> Native.create()
@@ -17,6 +18,13 @@ defmodule Membrane.Ogg.Payloader do
     end
   end
 
+  @spec make_pages(
+          payload :: binary,
+          state :: binary,
+          position :: non_neg_integer,
+          packet_number :: non_neg_integer,
+          header_type :: :bos | :cont | :eos
+        ) :: {:ok, state :: binary} | {:error, reason :: any}
   def make_pages(buffer, native, position, packet_number, header_type) do
     Native.make_pages(
       buffer,
@@ -27,10 +35,18 @@ defmodule Membrane.Ogg.Payloader do
     )
   end
 
+  @spec flush(binary) :: {:ok, state :: binary} | {:error, reason :: any}
   def flush(native) do
     Native.flush(native)
   end
 
+  @spec make_pages_and_flush(
+          buffer :: binary,
+          native :: binary,
+          position :: non_neg_integer,
+          packet_number :: non_neg_integer,
+          header_type :: :bos | :cont | :eos
+        ) :: {:ok, state :: binary} | {:error, reason :: any}
   def make_pages_and_flush(buffer, native, position, packet_number, header_type) do
     with {:ok, page} <- make_pages(buffer, native, position, packet_number, header_type),
          {:ok, flushed} <- flush(native) do

@@ -104,6 +104,12 @@ defmodule Membrane.Ogg.Payloader.Opus do
 
   @impl true
   def handle_caps(:input, caps, _ctx, state) do
+    if caps.channels > 2,
+      do:
+        IO.warn(
+          "Can't properly encode opus stream with #{caps.channels} channels. Resultant file will be unreadable"
+        )
+
     caps = %Ogg{
       content: caps
     }
@@ -213,7 +219,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   end
 
   defp audio_pages(data, _ctx, state) do
-    # FIXME for now doesn't handle 0-length frames
+    # FIXME: for now doesn't handle 0-length frames
     position_offset = div(@reference_sample_rate, 1000) * state.frame_size
 
     {:ok, output} =

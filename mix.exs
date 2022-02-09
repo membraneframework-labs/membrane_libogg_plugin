@@ -6,7 +6,7 @@ defmodule MembraneOggPlugin.MixProject do
       app: :membrane_ogg_plugin,
       compilers: [:unifex, :bundlex] ++ Mix.compilers(),
       version: "0.1.0",
-      elixir: "~> 1.13",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]

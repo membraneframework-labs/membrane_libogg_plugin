@@ -12,30 +12,32 @@ defmodule Membrane.Ogg.Payloader.Opus do
   alias Membrane.{Buffer, Opus, Ogg}
   alias Membrane.Ogg.Payloader
 
+  require Membrane.Logger
+
   @vendor_string "Membrane"
   # this is hardcoded per the RFC
   @encapsulation_version 1
   @reference_sample_rate 48_000
 
   def_options frame_size: [
-                type: :float,
+                spec: float,
                 description: """
                 The duration of an Opus packet as defined in [RFC6716] can be any
                 multiple of 2.5 ms, up to a maximum of 120 ms.
                 See https://datatracker.ietf.org/doc/html/rfc7845#section-4
                 """
               ],
-              random_serial_number?: [
-                type: :non_neg_integer,
-                default: true,
+              serial_number: [
+                spec: non_neg_integer | :random,
+                default: :random,
                 description: """
                 Ogg logical bitstreams must be assigned a unique 4-byte serial number which is chosen randomly.
-                This option allows you to enforce using the same serial number every time which can be useful for reproducability.
+                This option allows you to pass in a specific number which can be useful for reproducability.
                 See https://datatracker.ietf.org/doc/html/rfc3533#section-4
                 """
               ],
               original_sample_rate: [
-                type: :non_neg_integer,
+                spec: non_neg_integer,
                 default: 0,
                 description: """
                 Optionally, you may pass the original sample rate of the source (before it was encoded).
@@ -44,7 +46,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
                 """
               ],
               output_gain: [
-                type: :integer,
+                spec: integer,
                 default: 0,
                 description: """
                 Optionally, you may pass a gain change when decoding.
@@ -53,7 +55,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
                 """
               ],
               pre_skip: [
-                type: :non_neg_integer,
+                spec: non_neg_integer,
                 default: 0,
                 description: """
                 Optionally, you may as a number of samples (at 48kHz) to discard
@@ -83,7 +85,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
 
   @impl true
   def handle_stopped_to_prepared(_ctx, state) do
-    case Payloader.init(state.random_serial_number?) do
+    case Payloader.init(state.serial_number) do
       {:ok, payloader} ->
         {:ok, %{state | payloader: payloader}}
 
@@ -106,8 +108,8 @@ defmodule Membrane.Ogg.Payloader.Opus do
   def handle_caps(:input, caps, _ctx, state) do
     if caps.channels > 2,
       do:
-        IO.warn(
-          "Can't properly encode opus stream with #{caps.channels} channels. Resultant file will be unreadable"
+        Membrane.Logger.warn(
+          "Tried to payload an Opus stream with #{caps.channels} but only Opus streams with 1 or 2 channels are currently supported."
         )
 
     caps = %Ogg{
@@ -219,7 +221,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   end
 
   defp audio_pages(data, _ctx, state) do
-    # FIXME: for now doesn't handle 0-length frames
+    # TODO: for now doesn't handle 0-length frames
     position_offset = div(@reference_sample_rate, 1000) * state.frame_size
 
     {:ok, output} =

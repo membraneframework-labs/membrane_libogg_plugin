@@ -9,13 +9,9 @@ defmodule Membrane.Ogg.Payloader do
 
   alias __MODULE__.Native
 
-  @spec init(boolean) :: {:ok, state :: binary} | {:error, reason :: any}
-  def init(random_serial_number?) do
-    if random_serial_number? do
-      stream_identifier() |> Native.create()
-    else
-      Native.create(4_210_672_757)
-    end
+  @spec init(non_neg_integer) :: {:ok, state :: binary} | {:error, reason :: any}
+  def init(serial_number) do
+    Native.create(stream_identifier(serial_number))
   end
 
   @spec make_pages(
@@ -24,7 +20,7 @@ defmodule Membrane.Ogg.Payloader do
           position :: non_neg_integer,
           packet_number :: non_neg_integer,
           header_type :: :bos | :cont | :eos
-        ) :: {:ok, state :: binary} | {:error, reason :: any}
+        ) :: {:ok, state :: binary} | {:error, reason :: atom}
   def make_pages(buffer, native, position, packet_number, header_type) do
     Native.make_pages(
       buffer,
@@ -35,7 +31,7 @@ defmodule Membrane.Ogg.Payloader do
     )
   end
 
-  @spec flush(binary) :: {:ok, state :: binary} | {:error, reason :: any}
+  @spec flush(binary) :: {:ok, state :: binary} | {:error, reason :: atom}
   def flush(native) do
     Native.flush(native)
   end
@@ -46,7 +42,7 @@ defmodule Membrane.Ogg.Payloader do
           position :: non_neg_integer,
           packet_number :: non_neg_integer,
           header_type :: :bos | :cont | :eos
-        ) :: {:ok, state :: binary} | {:error, reason :: any}
+        ) :: {:ok, state :: binary} | {:error, reason :: atom}
   def make_pages_and_flush(buffer, native, position, packet_number, header_type) do
     with {:ok, page} <- make_pages(buffer, native, position, packet_number, header_type),
          {:ok, flushed} <- flush(native) do
@@ -62,7 +58,10 @@ defmodule Membrane.Ogg.Payloader do
     end
   end
 
-  defp stream_identifier do
+  defp stream_identifier(:random) do
     :rand.uniform(1 <<< 32) - 1
   end
+
+  # check if in range (0, 2**32)
+  defp stream_identifier(number) when number > 0 and number < 4_294_967_296, do: number
 end

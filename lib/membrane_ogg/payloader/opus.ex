@@ -9,10 +9,10 @@ defmodule Membrane.Ogg.Payloader.Opus do
 
   use Membrane.Filter
 
+  require Membrane.Logger
+
   alias Membrane.{Buffer, Opus, Ogg}
   alias Membrane.Ogg.Payloader
-
-  require Membrane.Logger
 
   @vendor_string "Membrane"
   # this is hardcoded per the RFC

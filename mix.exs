@@ -37,7 +37,7 @@ defmodule Membrane.OggPlugin.Mixfile do
 
   defp deps do
     [
-      {:membrane_core, "~> 0.8.1"},
+      {:membrane_core, "~> 0.8.2"},
       {:membrane_common_c, "~> 0.10.0"},
       {:unifex, "~> 0.7.0"},
       # TODO: publish on hex and don't reference github
@@ -66,7 +66,7 @@ defmodule Membrane.OggPlugin.Mixfile do
       extras: ["README.md", "LICENSE"],
       formatters: ["html"],
       source_ref: "v#{@version}",
-      nest_modules_by_prefix: [Membrane.OggPlugin]
+      nest_modules_by_prefix: [Membrane.Ogg]
     ]
   end
 end

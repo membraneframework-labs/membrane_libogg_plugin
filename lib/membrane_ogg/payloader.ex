@@ -9,14 +9,14 @@ defmodule Membrane.Ogg.Payloader do
 
   alias __MODULE__.Native
 
-  @spec init(non_neg_integer) :: {:ok, state :: binary} | {:error, reason :: any}
+  @spec init(non_neg_integer | :random) :: {:ok, state :: binary} | {:error, reason :: atom}
   def init(serial_number) do
     Native.create(stream_identifier(serial_number))
   end
 
   @spec make_pages(
-          payload :: binary,
-          state :: binary,
+          buffer :: binary,
+          native :: reference,
           position :: non_neg_integer,
           packet_number :: non_neg_integer,
           header_type :: :bos | :cont | :eos
@@ -31,14 +31,14 @@ defmodule Membrane.Ogg.Payloader do
     )
   end
 
-  @spec flush(binary) :: {:ok, state :: binary} | {:error, reason :: atom}
+  @spec flush(reference) :: {:ok, state :: binary} | {:error, reason :: atom}
   def flush(native) do
     Native.flush(native)
   end
 
   @spec make_pages_and_flush(
           buffer :: binary,
-          native :: binary,
+          native :: reference,
           position :: non_neg_integer,
           packet_number :: non_neg_integer,
           header_type :: :bos | :cont | :eos

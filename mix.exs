@@ -1,7 +1,7 @@
 defmodule Membrane.OggPlugin.Mixfile do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.2.1"
   @github_url "https://github.com/membraneframework/membrane_ogg_plugin"
 
   def project do
@@ -39,7 +39,7 @@ defmodule Membrane.OggPlugin.Mixfile do
     [
       {:membrane_core, "~> 0.11.0"},
       {:membrane_common_c, "~> 0.14.0"},
-      {:unifex, "~> 1.0.0"},
+      {:unifex, "~> 1.1"},
       # TODO: publish on hex and don't reference github
       {:membrane_ogg_format, github: "membraneframework/membrane_ogg_format"},
       {:membrane_opus_format, "~> 0.3.0"},

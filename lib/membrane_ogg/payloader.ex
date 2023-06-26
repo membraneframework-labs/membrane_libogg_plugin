@@ -5,7 +5,7 @@ defmodule Membrane.Ogg.Payloader do
   It should not be used directly.
   """
 
-  use Bitwise, only_operators: true
+  import Bitwise
 
   alias __MODULE__.Native
 

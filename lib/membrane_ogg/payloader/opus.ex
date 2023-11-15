@@ -65,8 +65,8 @@ defmodule Membrane.Ogg.Payloader.Opus do
                 """
               ]
 
-  def_input_pad :input, demand_unit: :buffers, accepted_format: Opus
-  def_output_pad :output, accepted_format: Ogg
+  def_input_pad :input, flow_control: :manual, demand_unit: :buffers, accepted_format: Opus
+  def_output_pad :output, flow_control: :manual, accepted_format: Ogg
 
   @impl true
   def handle_init(_ctx, %__MODULE__{} = options) do
@@ -104,7 +104,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   def handle_stream_format(:input, stream_format, _ctx, state) do
     if stream_format.channels > 2,
       do:
-        Membrane.Logger.warn(
+        Membrane.Logger.warning(
           "Tried to payload an Opus stream with #{stream_format.channels} but only Opus streams with 1 or 2 channels are currently supported."
         )
 
@@ -131,7 +131,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   end
 
   @impl true
-  def handle_process(:input, %Buffer{payload: data}, ctx, state) when state.header_sent? do
+  def handle_buffer(:input, %Buffer{payload: data}, ctx, state) when state.header_sent? do
     {:ok, {raw_output, position_offset}} = audio_pages(data, ctx, state)
 
     state =
@@ -152,7 +152,7 @@ defmodule Membrane.Ogg.Payloader.Opus do
   end
 
   @impl true
-  def handle_process(:input, %Buffer{payload: data}, ctx, state) do
+  def handle_buffer(:input, %Buffer{payload: data}, ctx, state) do
     with {:ok, id_header} <- id_header(ctx, state),
          {:ok, comment_header} <- comment_header(state),
          {:ok, {audio_pages, position_offset}} <- audio_pages(data, ctx, state) do

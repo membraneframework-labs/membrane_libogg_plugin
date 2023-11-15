@@ -13,7 +13,7 @@ defmodule Membrane.Ogg.BundlexProject do
         interface: :nif,
         deps: [membrane_common_c: :membrane],
         sources: ["payloader.c"],
-        pkg_configs: ["ogg"],
+        os_deps: [pkg_config: "ogg"],
         preprocessor: Unifex
       ]
     ]
